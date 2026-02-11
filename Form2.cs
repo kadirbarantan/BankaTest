@@ -44,8 +44,12 @@ namespace BankaTest
             baglanti.Close();
 
         }
+
+        public string gonderen;
         private void BtnGonder_Click(object sender, EventArgs e)
         {
+            gonderen = LblHesapNo.Text;
+
             baglanti.Open();
             SqlCommand komut = new SqlCommand("update TBLHESAP set BAKIYE=BAKIYE+@p1 where HESAPNO=@p2",baglanti);
             komut.Parameters.AddWithValue("@p1",decimal.Parse(TxtTutar.Text));
@@ -61,6 +65,19 @@ namespace BankaTest
             komut2.ExecuteNonQuery();
             baglanti.Close();
             MessageBox.Show("İşlem Gerçekleşti");
+
+
+
+            baglanti.Open();
+            SqlCommand komut3 = new SqlCommand("INSERT INTO TBLHAREKET (GONDEREN, ALICI, TUTAR) VALUES (@l1, @l2, @l3)", baglanti);
+            komut3.Parameters.AddWithValue("@l1", LblHesapNo.Text.Trim());
+            komut3.Parameters.AddWithValue("@l2", MskHesapNo.Text.Trim());   // Alıcı Hesap No
+            komut3.Parameters.AddWithValue("@l3", decimal.Parse(TxtTutar.Text)); // Gönderilen Tutar
+
+            komut3.ExecuteNonQuery();
+            baglanti.Close();
         }
+
+        
     }
 }

@@ -17,7 +17,7 @@ namespace BankaTest
         {
             InitializeComponent();
         }
-        SqlConnection baglanti=new SqlConnection(@"Data Source=DESKTOP-JKNOO9P\SQLEXPRESS;Initial Catalog=DbBankaTest;Integrated Security=True;");
+        SqlConnection baglanti = new SqlConnection(@"Data Source=DESKTOP-JKNOO9P\SQLEXPRESS;Initial Catalog=DbBankaTest;Integrated Security=True;");
         private void BtnKaydet_Click(object sender, EventArgs e)
         {
             baglanti.Open();
@@ -28,7 +28,7 @@ namespace BankaTest
             komut.Parameters.AddWithValue("@p4", MskTelefon.Text);
             komut.Parameters.AddWithValue("@p5", MskHesapNo.Text);
             komut.Parameters.AddWithValue("@p6", TxtSifre.Text);
-            komut.ExecuteNonQuery(); 
+            komut.ExecuteNonQuery();
             baglanti.Close();
             MessageBox.Show("Kaydınız Tamamlandı!");
 
@@ -36,9 +36,29 @@ namespace BankaTest
 
         private void BtnHesapNo_Click(object sender, EventArgs e)
         {
-            Random rastgele=new Random();
-            int sayi=rastgele.Next(100000,1000000);
-            MskHesapNo.Text= sayi.ToString();
+            Random rastgele = new Random();
+            string yeniHesapNo = "";
+            bool numaraVarMi = true;
+
+            baglanti.Open();
+
+            while (numaraVarMi)
+            {
+                yeniHesapNo = rastgele.Next(100000, 1000000).ToString();
+
+                SqlCommand komut = new SqlCommand("SELECT COUNT(*) FROM TBLKISILER WHERE HESAPNO = @p1", baglanti);
+                komut.Parameters.AddWithValue("@p1", yeniHesapNo);
+
+                int sonuc = (int)komut.ExecuteScalar();
+
+                if (sonuc == 0)
+                {
+                    numaraVarMi = false;
+                }
+
+                baglanti.Close();
+                MskHesapNo.Text = yeniHesapNo;
+            }
         }
     }
 }
